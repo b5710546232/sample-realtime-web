@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short polling</title>
+</head>
+
+<body>
+    <h1>Short polling</h1>
+    <div id="counter"></div>
+    <script>
+        async function fetchData() {
+            const resp = await fetch(`/counter`)
+            return resp.json()
+        }
+        setInterval(async () => {
+            const { message } = await fetchData()
+            updateCounterText(message)
+        }, 100)
+
+        function updateCounterText(counter) {
+            const textContext = `counter: ${counter}`
+            document.getElementById(`counter`)
+                .textContent = textContext
+        }
+    </script>
+</body>
+
+</html>

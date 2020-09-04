@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Long polling</title>
+</head>
+
+<body>
+    <h1>Long polling</h1>
+    <div id="counter"></div>
+    <script>
+        const TYPE_LONGPOLLING = `long`
+        const TYPE_SHORTPOLLING = `short`
+
+
+        async function startLongPolling() {
+            await fetchDataWithLongPolling()
+            startLongPolling()
+        }
+        fetchDataWithShortPolling()
+        startLongPolling()
+
+
+        async function fetchDataWithShortPolling() {
+            await fetchData(TYPE_SHORTPOLLING)
+        }
+
+        async function fetchDataWithLongPolling() {
+            await fetchData(TYPE_LONGPOLLING)
+        }
+
+        async function fetchData(type) {
+            let url = `/counter?type=${type}`
+            const resp = await fetch(url)
+            const jsonResp = await resp.json()
+            const { message } = jsonResp
+            updateCounterText(message)
+        }
+
+        function updateCounterText(counter) {
+            const textContext = `counter: ${counter}`
+            document.getElementById(`counter`)
+                .textContent = textContext
+        }
+
+    </script>
+</body>
+
+</html>

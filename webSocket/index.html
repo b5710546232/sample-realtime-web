@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket</title>
+</head>
+
+<body>
+    <h1>WebSocket</h1>
+    <div id="counter"></div>
+    <input type="text" id="text" onkeypress="return onHandleText(event)">
+    <script>
+        const endpoint = window.location.host.replace('/', '')
+        let socket = new WebSocket(`ws://${endpoint}/ws`);
+
+        socket.onopen = function (e) {
+            console.log(`Connection established`)
+            const msg = {
+                event: `ask`
+            }
+            socket.send(JSON.stringify(msg));
+        };
+
+        socket.onmessage = function (e) {
+
+            try {
+                const msg = JSON.parse(e.data)
+                console.log(msg)
+                switch (msg.event) {
+                    case `counter`:
+                        updateCounterText(msg.value)
+                }
+            }
+            catch (e) { }
+        };
+
+        socket.onclose = function (e) {
+            if (e.wasClean) {
+                alert(`[close] Connection closed cleanly, code=${e.code} reason=${e.reason}`);
+                console.log(`Connection closed; code=${e.code} reason=${e.reason}`)
+            } else {
+                console.log(`Connection closed`)
+            }
+        };
+
+        socket.onerror = function (error) {
+            console.error(`error ${error}`)
+        };
+
+        function ask() {
+            if (socket) {
+                const msg = {
+                    event: `ask`
+                }
+                socket.send(JSON.stringify(msg))
+            }
+        }
+
+        function onHandleText(event) {
+            if (event.key !== `Enter`) return;
+            const text = document.getElementById(`text`).value
+            if (text.length <= 0) return;
+            const msg = {
+                event: `updateText`,
+                value: text
+            }
+            socket.send(JSON.stringify(msg))
+        }
+
+        function updateCounterText(counter) {
+            const textContext = `counter: ${counter}`
+            document.getElementById(`counter`)
+                .textContent = textContext
+        }
+
+    </script>
+</body>
+
+</html>

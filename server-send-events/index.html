@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server send event</title>
+</head>
+
+<body>
+    <h1>Server send event</h1>
+    <div id="counter"></div>
+    <script>
+        const source = new EventSource('/counter')
+        source.addEventListener('counter', (ev) => {
+            const data = ev.data
+            const { message } = JSON.parse(data)
+            // console.log(data)
+            updateCounterText(message)
+        })
+
+        // all message
+        source.onmessage = (ev) => {
+            // console.log(ev)
+        }
+
+        function updateCounterText(counter) {
+            const textContext = `counter: ${counter}`
+            document.getElementById(`counter`)
+                .textContent = textContext
+        }
+
+    </script>
+</body>
+
+</html>
